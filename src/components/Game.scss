@@ -1,5 +1,5 @@
 .board-row{
-  display: flex;
+  
 }
 .square{
   display: inline-flex;
@@ -8,4 +8,10 @@
   padding: 0;
   width: 40px;
   height: 40px;
+  border: 0.5px solid #000;
+}
+
+table{
+  border: 1px solid #000;
+  border-collapse: collapse;
 }
