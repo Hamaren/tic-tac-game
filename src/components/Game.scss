@@ -68,9 +68,6 @@ button{
   }
 }
 
-.board-row{
-  
-}
 .square{
   display: inline-flex;
   justify-content: center;
@@ -84,4 +81,5 @@ button{
 table{
   border: 1px solid #000;
   border-collapse: collapse;
+  opacity: 0.1;
 }
