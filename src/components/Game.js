@@ -36,7 +36,10 @@ class Board extends React.Component {
         return (
             <Square
                 value={this.props.squares[i]}
-                onClick={() => this.props.onClick(i)}
+                onClick={() => {
+                    this.props.onClick(i);
+                    this.props.check();
+                }}
                 key={i}
             />
         )
@@ -75,6 +78,10 @@ class Game extends React.Component {
             history: [{
                 squares: Array(9).fill(null)
             }],
+            score: {
+                x: 0,
+                o: 0,
+            },
             stepNumber: 0,
             xIsNext: true,
         };
@@ -104,6 +111,28 @@ class Game extends React.Component {
         })
     }
 
+    scoreCheck(){
+        const history = this.state.history[this.state.stepNumber];
+        const winner = calculateWinner(history.squares);
+        console.log(winner);
+        if(winner === 'X'){
+            this.setState({
+                score: {
+                    x: this.state.score.x + 1,
+                    o: this.state.score.o,
+                }
+            })
+        }
+        if(winner === 'O'){
+            this.setState({
+                score: {
+                    x: this.state.score.x,
+                    o: this.state.score.o + 1,
+                }
+            })
+        }
+    }
+
     render(){
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -123,10 +152,21 @@ class Game extends React.Component {
                 <div className={'game-board'}>
                     <Board
                         squares={current.squares}
+                        check={this.scoreCheck}
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
                 <div className={'game-info'}>
+                    <div className={'game-score'}>
+                        <p className={'game-score__cap'}>Total score:</p>
+                        <div className={'game-score__player game-score__player_x'}>
+                            <span className={'game-score__player-score'}>{`Player X: ${this.state.score.x}`}</span>
+                        </div>
+                        <div className={'game-score__player game-score__player_o'}>
+                            <span className={'game-score__player-score'}>{`Player O: ${this.state.score.o}`}</span>
+                        </div>
+                        <button className={'game-score__reset'}>Reset score</button>
+                    </div>
                     <div>{status}</div>
                     <ol>{moves}</ol>
                 </div>
