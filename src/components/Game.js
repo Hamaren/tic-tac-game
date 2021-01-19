@@ -15,6 +15,7 @@ class Game extends React.Component {
             },
             stepNumber: 0,
             xIsNext: true,
+            showSteps: false,
         };
     }
 
@@ -91,54 +92,89 @@ class Game extends React.Component {
         }
     }
 
+    showSteps() {
+        this.setState({
+            showSteps: !this.state.showSteps
+        })
+    }
+
     render() {
         const history = this.state.history;
-        const current = history[this.state.stepNumber];
+        const stepNumber = this.state.stepNumber;
+        const current = history[stepNumber];
         const winner = calculateWinner(current.squares);
         const moves = history.map((step, move) => {
-            const desc = `To next move ${move}`;
-            return (
-                <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
-                </li>
-            )
+            if (move) {
+                const desc = `To next move ${move}`;
+                return (
+                    <li key={move}>
+                        <button onClick={() => this.jumpTo(move)}
+                                className={'game-info__jump-to game-btn'}>{desc}</button>
+                    </li>
+                )
+            } else {
+                return null
+            }
         });
         const status = winner ? `Winner ${winner}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
 
         return (
             <div className={'game'}>
+                <div className={'game-display'}>
+                    <div className={'game-info'}>
+                        <p className={'game-info__cap'}>Actions:</p>
+                        <div className={'game-info__player'}>
+                            <span className={'game-score__player-score'}>{status}</span>
+                        </div>
+                        <div className={'game-info__player'}>
+                            <span className={'game-score__player-score'}>
+                                Steps remain: {current.squares.length - stepNumber}
+                            </span>
+                        </div>
+                        {this.state.showSteps ? (
+                            <div className={'history-wrapper'}>
+                                <p className={'game-info__cap'}>Steps history:</p>
+                                <ul className={'game-info__list'}>{moves}</ul>
+                            </div>
+                        ) : null}
+                    </div>
+                </div>
                 <div className={'game-board'}>
                     <Board
                         squares={current.squares}
-                        check={() => this.scoreCheck()}
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
-                <div className={'game-info'}>
-                    <div className={'game-score'}>
-                        <p className={'game-score__cap'}>Total score:</p>
-                        <div className={'game-score__player game-score__player_x'}>
-                            <span className={'game-score__player-score'}>{`Player X: ${this.state.score.x}`}</span>
+                <div className={'game-display'}>
+                    <div className={'game-info'}>
+                        <p className={'game-info__cap'}>Total score:</p>
+                        <div className={'game-info__player game-info__player_x'}>
+                            <span className={'game-info__player-score'}>{`Player X: ${this.state.score.x}`}</span>
                         </div>
-                        <div className={'game-score__player game-score__player_o'}>
-                            <span className={'game-score__player-score'}>{`Player O: ${this.state.score.o}`}</span>
+                        <div className={'game-info__player game-info__player_o'}>
+                            <span className={'game-info__player-score'}>{`Player O: ${this.state.score.o}`}</span>
+                        </div>
+                        <div className={'game-info__show-steps'}>
+                            <input
+                                type='checkbox' id="show-steps" className={'ios-switch'}
+                                onChange={() => this.showSteps()}
+                            />
+                            <label htmlFor="show-steps">Show history</label>
                         </div>
                         <button
-                            className={'game-score__reset'}
+                            className={'game-info__reset game-btn'}
                             onClick={() => this.clearScore()}
                         >
                             Reset score
                         </button>
                         {winner ? (
                             <button
-                                className={'game-score__reset'}
+                                className={'game-info__again game-btn'}
                                 onClick={() => this.playAgain()}
                             >
                                 Play again
                             </button>) : null}
                     </div>
-                    <div>{status}</div>
-                    <ol>{moves}</ol>
                 </div>
             </div>
         )

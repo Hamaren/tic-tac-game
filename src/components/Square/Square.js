@@ -4,14 +4,13 @@ class Square extends React.Component{
     render(){
         return(
             <td
-                className={'square'}
+                className={`square ${this.props.value ? 'active' : ''}`}
                 onClick={this.props.onClick}
             >
-                {this.props.value}
+                <span>{this.props.value}</span>
             </td>
         )
     }
 }
-
 
 export default Square;
