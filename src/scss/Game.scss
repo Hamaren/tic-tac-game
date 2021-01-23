@@ -1,3 +1,25 @@
+@mixin lg {
+  @media all and (max-width: 1240px) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media all and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media all and (max-width: 767px) {
+    @content;
+  }
+}
+
+body{
+  margin: 0;
+}
+
 button {
   border: none;
   padding: 0;
@@ -17,8 +39,15 @@ ul {
 .game {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   max-width: 900px;
   margin: 80px auto 0 auto;
+  @include md{
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px;
+    margin-top: 30px;
+  }
 }
 
 .game-btn {
@@ -35,7 +64,6 @@ ul {
   font-size: 16px;
   font-weight: 500;
   color: #fff;
-
   &:hover {
     background: #940f0f;
   }
@@ -49,22 +77,22 @@ ul {
   border-radius: 4px;
   line-height: 1;
   padding: 16px;
-
+  @include md{
+    width: 152px;
+    margin-top: 10px;
+  }
   &__cap {
     margin: 0 0 8px 0;
     font-size: 22px;
     font-weight: 500;
   }
-
   &__player {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 4px;
-
     &_x {
       color: #a1a1cc;
     }
-
     &_o {
       color: #e68c8c;
     }
@@ -98,10 +126,26 @@ ul {
       }
     }
   }
+  &_left{
+    @include md{
+      order: 2;
+    }
+  }
+  &_right{
+    @include md{
+      order: 3;
+    }
+  }
 }
 
 .history-wrapper{
   margin-top: 20px;
+}
+
+.game-board{
+  @include md{
+    order: 1;
+  }
 }
 
 .square {
@@ -113,6 +157,10 @@ ul {
   height: 80px;
   border: 0.5px solid #000;
   font-size: 50px;
+  @include md{
+    width: 60px;
+    height: 60px;
+  }
   &.active{
     span{
       animation: step-anim linear 0.3s forwards;
@@ -126,7 +174,6 @@ ul {
     transform: scale(5);
     opacity: 0;
   }
-
   100%{
     transform: scale(1);
     opacity: 1;
@@ -182,7 +229,6 @@ table {
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
     }
   }
-
   &:checked{
     +label{
       &:after {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from './Board/Board.js';
-import './Game.scss';
+import '../scss/Game.scss';
 
 class Game extends React.Component {
     constructor(props) {
@@ -24,7 +24,7 @@ class Game extends React.Component {
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         if (calculateWinner(squares) || squares[i]) {
-            //if game already done just return from handleClick
+            //if we have a winner or all squares is busy, just return from handleClick
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -53,11 +53,14 @@ class Game extends React.Component {
                             o: this.state.score.o + 1,
                         }
                     });
+                    break;
+                default: return;
             }
         });
     }
 
     clearScore() {
+        //clear score of wins
         this.setState({
             score: {
                 x: 0,
@@ -66,8 +69,8 @@ class Game extends React.Component {
         })
     }
 
-    //refresh the history and steps for new game
     playAgain() {
+        //refresh the history and steps for new game
         this.setState({
             history: [{
                 squares: Array(9).fill(null)
@@ -77,6 +80,7 @@ class Game extends React.Component {
     }
 
     jumpTo(step) {
+        //navigation inside steps history
         if (step) {
             this.setState({
                 stepNumber: step,
@@ -93,6 +97,7 @@ class Game extends React.Component {
     }
 
     showSteps() {
+        //show or hide history of steps
         this.setState({
             showSteps: !this.state.showSteps
         })
@@ -105,6 +110,7 @@ class Game extends React.Component {
         const winner = calculateWinner(current.squares);
         const moves = history.map((step, move) => {
             if (move) {
+                //render history steps
                 const desc = `To next move ${move}`;
                 return (
                     <li key={move}>
@@ -116,28 +122,28 @@ class Game extends React.Component {
                 return null
             }
         });
-        const status = winner ? `Winner ${winner}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+        const status = (winner) ?
+            (winner === 'Draw') ? `Draw` : `Winner ${winner}` :
+            `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
 
         return (
             <div className={'game'}>
-                <div className={'game-display'}>
-                    <div className={'game-info'}>
-                        <p className={'game-info__cap'}>Actions:</p>
-                        <div className={'game-info__player'}>
-                            <span className={'game-score__player-score'}>{status}</span>
-                        </div>
-                        <div className={'game-info__player'}>
+                <div className={'game-info game-info_left'}>
+                    <p className={'game-info__cap'}>Actions:</p>
+                    <div className={'game-info__player'}>
+                        <span className={'game-score__player-score'}>{status}</span>
+                    </div>
+                    <div className={'game-info__player'}>
                             <span className={'game-score__player-score'}>
                                 Steps remain: {current.squares.length - stepNumber}
                             </span>
-                        </div>
-                        {this.state.showSteps ? (
-                            <div className={'history-wrapper'}>
-                                <p className={'game-info__cap'}>Steps history:</p>
-                                <ul className={'game-info__list'}>{moves}</ul>
-                            </div>
-                        ) : null}
                     </div>
+                    {this.state.showSteps ? (
+                        <div className={'history-wrapper'}>
+                            <p className={'game-info__cap'}>Steps history:</p>
+                            <ul className={'game-info__list'}>{moves}</ul>
+                        </div>
+                    ) : null}
                 </div>
                 <div className={'game-board'}>
                     <Board
@@ -145,36 +151,34 @@ class Game extends React.Component {
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
-                <div className={'game-display'}>
-                    <div className={'game-info'}>
-                        <p className={'game-info__cap'}>Total score:</p>
-                        <div className={'game-info__player game-info__player_x'}>
-                            <span className={'game-info__player-score'}>{`Player X: ${this.state.score.x}`}</span>
-                        </div>
-                        <div className={'game-info__player game-info__player_o'}>
-                            <span className={'game-info__player-score'}>{`Player O: ${this.state.score.o}`}</span>
-                        </div>
-                        <div className={'game-info__show-steps'}>
-                            <input
-                                type='checkbox' id="show-steps" className={'ios-switch'}
-                                onChange={() => this.showSteps()}
-                            />
-                            <label htmlFor="show-steps">Show history</label>
-                        </div>
-                        <button
-                            className={'game-info__reset game-btn'}
-                            onClick={() => this.clearScore()}
-                        >
-                            Reset score
-                        </button>
-                        {winner ? (
-                            <button
-                                className={'game-info__again game-btn'}
-                                onClick={() => this.playAgain()}
-                            >
-                                Play again
-                            </button>) : null}
+                <div className={'game-info game-info_right'}>
+                    <p className={'game-info__cap'}>Total score:</p>
+                    <div className={'game-info__player game-info__player_x'}>
+                        <span className={'game-info__player-score'}>{`Player X: ${this.state.score.x}`}</span>
                     </div>
+                    <div className={'game-info__player game-info__player_o'}>
+                        <span className={'game-info__player-score'}>{`Player O: ${this.state.score.o}`}</span>
+                    </div>
+                    <div className={'game-info__show-steps'}>
+                        <input
+                            type='checkbox' id="show-steps" className={'ios-switch'}
+                            onChange={() => this.showSteps()}
+                        />
+                        <label htmlFor="show-steps">Show history</label>
+                    </div>
+                    <button
+                        className={'game-info__reset game-btn'}
+                        onClick={() => this.clearScore()}
+                    >
+                        Reset score
+                    </button>
+                    {winner ? (
+                        <button
+                            className={'game-info__again game-btn'}
+                            onClick={() => this.playAgain()}
+                        >
+                            Play again
+                        </button>) : null}
                 </div>
             </div>
         )
@@ -182,6 +186,7 @@ class Game extends React.Component {
 }
 
 function calculateWinner(squares) {
+    //calculate who win or draw status
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -192,12 +197,18 @@ function calculateWinner(squares) {
         [0, 4, 8],
         [2, 4, 6],
     ];
+
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             return squares[a];
+        } else {
+            if (squares.indexOf(null) === -1) {
+                return 'Draw'
+            }
         }
     }
+
     return null;
 }
 
