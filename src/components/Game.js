@@ -203,7 +203,7 @@ function calculateWinner(squares) {
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             return squares[a];
         } else {
-            if (squares.indexOf(null) === -1) {
+            if (!squares.includes(null)) {
                 return 'Draw'
             }
         }
